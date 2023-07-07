@@ -14,8 +14,9 @@ from knox.views import LoginView as KnoxLoginView
 from knox.auth import TokenAuthentication
 
 from .drowsiness_detection_ml.drowsiness_detetction.drowsiness_detection import Read_Frame
-from .serializers import UserSerializer, RegisterSerializer, DistanceMatrixSerializer
-
+from .models import LisenseData, get_or_none
+from .serializers import UserSerializer, RegisterSerializer, DistanceMatrixSerializer, \
+    LisenseVerificationRequestSerializer, LisenseVerificationResponseSerializer
 
 from django.contrib.auth.models import User
 
@@ -78,10 +79,26 @@ class DistanceMatrixAPIView(APIView):
         serializer.is_valid(raise_exception=True)
         origin = serializer.validated_data.get('origin')
         destination = serializer.validated_data.get('destination')
+        place_id = serializer.validated_data.get('place_id')
         api = DistanceMatrixAPI()
-        result = api.get_distance_matrix(origin, destination)
+        result = api.get_distance_matrix(origin=origin, destination=destination, place_id=place_id)
         if result:
             return Response(data={'result': result}, status=200)
 
         return Response(status=400)
 
+
+class VerificationAPIView(APIView):
+
+    def get(self, request):
+        serializer = LisenseVerificationRequestSerializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        cnic = serializer.validated_data.get('cnic')
+        data = get_or_none(LisenseData, cnic=cnic)
+        if data:
+            result = LisenseVerificationResponseSerializer(data).data
+            return Response(
+                {'results': result},
+                status=400
+            )
+        return Response(status=404)

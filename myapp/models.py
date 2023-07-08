@@ -116,7 +116,7 @@ class LisenseData(models.Model):
 
 class TrackDrowsiness(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    count = models.IntegerField(max_length=100, default=0)
+    count = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
 

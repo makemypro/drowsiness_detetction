@@ -24,13 +24,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-pzykgfb2q6+(m^n3mlfggb+xxc9m+dci9i66z0pg=*7a0*oo8i'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -148,3 +149,17 @@ DJANGO_REST_PASSWORDRESET_TOKEN_CONFIG = {
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 django_heroku.settings(locals())
+
+JAZZMIN_SETTINGS = {
+    # title of the window (Will default to current_admin_site.site_title if absent or None)
+    "site_title": "Driver Drowsiness Detection",
+
+    # Title on the login screen (19 chars max) (defaults to current_admin_site.site_header if absent or None)
+    "site_header": "Admin Dashboard",
+
+    # Title on the brand (19 chars max) (defaults to current_admin_site.site_header if absent or None)
+    "site_brand": "Admin",
+    "welcome_sign": "Welcome to the Admin Portal",
+    "search_model": "auth.User",
+
+}

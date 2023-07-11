@@ -1,11 +1,13 @@
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.authtoken.serializers import AuthTokenSerializer
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import send_mail
+
 
 from django.contrib.auth import login
-
 
 from .distance_api import DistanceMatrixAPI
 
@@ -16,14 +18,16 @@ from knox.auth import TokenAuthentication
 from .drowsiness_detection_ml.drowsiness_detetction.drowsiness_detection import Read_Frame
 from .models import LisenseData, get_or_none
 from .serializers import UserSerializer, RegisterSerializer, DistanceMatrixSerializer, \
-    LisenseVerificationRequestSerializer, LisenseVerificationResponseSerializer
+    LisenseVerificationRequestSerializer, LisenseVerificationResponseSerializer, VerifyUserSerializer
 
 from django.contrib.auth.models import User
+
+from django.conf import settings
 
 
 class UserDetailAPI(APIView):
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
         user = request.user
@@ -98,7 +102,25 @@ class VerificationAPIView(APIView):
         if data:
             result = LisenseVerificationResponseSerializer(data).data
             return Response(
-                {'results': result},
-                status=400
+                {
+                    'results': [result]
+                },
+                status=200
             )
-        return Response(status=404)
+        return Response({'msg': f'No data found for {cnic}'}, status=404)
+
+
+class UserVerify(APIView):
+    def get(self, request):
+        serializer = VerifyUserSerializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        user = get_or_none(User, **serializer.validated_data)
+        if user:
+            return Response({'msg': 'ok'}, status=200)
+
+        return Response(
+            {
+                'msg': 'No user associated with this email or username!'
+            },
+            status=200
+        )

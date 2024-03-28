@@ -5,7 +5,7 @@ class DistanceMatrixAPI:
 
     def __int__(self):
         self.params = {
-            "key": "AIzaSyBeBsBzLYbb6-GEY_pMFjwcYpTXTQTO0YU",
+            "key": "XXXXXXXXXXXXXXXXXXXXXXX",
         }
         self.base_url = "https://maps.googleapis.com/maps/api/distancematrix/json"
 

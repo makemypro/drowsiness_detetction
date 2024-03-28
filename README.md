@@ -29,6 +29,6 @@ To run the project locally, follow these steps:
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/driver-drowsiness-detection.git
+git clone https://github.com/makemypro/drowsiness_detection.git
 pip install -r requirements.txt
 python manage.py runserver
